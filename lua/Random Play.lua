@@ -9,6 +9,7 @@ local MIN_TIME = 5
 time = Knob("Time", 500, MIN_TIME, 8000, false)
 randomize = Knob("Randomize", 0, 0, 1, false)
 noteDuration = Knob{"Note_Duration", 0.8, 0, 10, false, displayName = "Note Dur."}
+durationRandomize = Knob{"Duration_Randomize", 0, 0, 1, false, displayName = "Dur. Rand."}
 mode = Menu{"Multiple_Notes", {"Free", "Link", "Random Arp"}, displayName = "Multiple Notes"}
 
 isEventPlaying = {}
@@ -17,12 +18,17 @@ function getTimeVal()
     return time.value + (time.value - MIN_TIME) * randomize.value*(math.random() * 2 - 1)
 end
 
+function getDurationVal()
+    return noteDuration.value + noteDuration.value * randomize.value*(math.random() * 2 - 1)
+end
+
 -- MODE FREE
 
 function free(e)
     while isEventPlaying[e.id] do
         local timeVal = getTimeVal()
-        playNote(e.note, e.velocity, noteDuration.value * timeVal, e.layer, e.channel, e.input, e.vol, e.pan, e.tune, e.slice)
+        local duration = getDurationVal()
+        playNote(e.note, e.velocity, duration * timeVal, e.layer, e.channel, e.input, e.vol, e.pan, e.tune, e.slice)
         wait(timeVal)
     end
 end
@@ -36,9 +42,10 @@ function link()
     while active do
         active = false
         local timeVal = getTimeVal()
-        timeFoo = getTime() + noteDuration.value * timeVal
+        local duration = getDurationVal()
+        timeFoo = getTime() + duration * timeVal
         for k, e in pairs(isEventPlaying) do
-            playNote(e.note, e.velocity, noteDuration.value * timeVal, e.layer, e.channel, e.input, e.vol, e.pan, e.tune, e.slice)
+            playNote(e.note, e.velocity, duration * timeVal, e.layer, e.channel, e.input, e.vol, e.pan, e.tune, e.slice)
             active = true
         end
         if active then
@@ -64,10 +71,11 @@ function arp()
         
         randomI = math.random(1, len) 
         local timeVal = getTimeVal()
+        local duration = getDurationVal()
         local i = 1
         for k, e in pairs(isEventPlaying) do
             if (i == randomI) then
-                playNote(e.note, e.velocity, noteDuration.value * timeVal, e.layer, e.channel, e.input, e.vol, e.pan, e.tune, e.slice)
+                playNote(e.note, e.velocity, duration * timeVal, e.layer, e.channel, e.input, e.vol, e.pan, e.tune, e.slice)
                 wait(timeVal)
                 break
             end
