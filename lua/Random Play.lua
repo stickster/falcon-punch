@@ -6,7 +6,7 @@
 
 local MIN_TIME = 5
 
-time = Knob("Time", 500, MIN_TIME, 3000, false)
+time = Knob("Time", 500, MIN_TIME, 8000, false)
 randomize = Knob("Randomize", 0, 0, 1, false)
 noteDuration = Knob{"Note_Duration", 0.8, 0, 10, false, displayName = "Note Dur."}
 mode = Menu{"Multiple_Notes", {"Free", "Link", "Random Arp"}, displayName = "Multiple Notes"}
